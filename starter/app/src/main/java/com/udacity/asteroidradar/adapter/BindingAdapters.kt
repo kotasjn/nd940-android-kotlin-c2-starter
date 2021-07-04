@@ -1,19 +1,20 @@
-package com.udacity.asteroidradar
+package com.udacity.asteroidradar.adapter
 
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.udacity.asteroidradar.main.AsteroidAdapter
-
+import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.domain.Asteroid
+import com.udacity.asteroidradar.domain.PictureOfDay
 
 /**
  * Uses the Picasso library to load an image by URL into an [ImageView]
  */
 @BindingAdapter("pictureOfDay")
-fun bindImage(imgView: ImageView, pictureOfDay: PictureOfDay) {
-    if (pictureOfDay.mediaType == "image") {
+fun bindImage(imgView: ImageView, pictureOfDay: PictureOfDay?) {
+    if (pictureOfDay?.mediaType == "image") {
         Picasso.get().load(pictureOfDay.url).into(imgView)
         imgView.contentDescription = imgView.context.getString(
             R.string.nasa_picture_of_day_content_description_format,

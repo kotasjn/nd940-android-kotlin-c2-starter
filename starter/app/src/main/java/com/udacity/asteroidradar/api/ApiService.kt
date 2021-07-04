@@ -5,7 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
-import com.udacity.asteroidradar.PictureOfDay
+import com.udacity.asteroidradar.domain.PictureOfDay
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -25,7 +25,7 @@ interface ApiService {
     ): Deferred<JSONObject>
 
     @GET("planetary/apod")
-    fun getPictureOfDay(): Deferred<PictureOfDay>
+    fun getPictureOfDay(): Deferred<PictureOfDayDto>
 
 }
 
