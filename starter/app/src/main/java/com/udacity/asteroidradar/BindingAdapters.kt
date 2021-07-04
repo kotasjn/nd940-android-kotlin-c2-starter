@@ -4,7 +4,27 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.main.AsteroidAdapter
+
+
+/**
+ * Uses the Picasso library to load an image by URL into an [ImageView]
+ */
+@BindingAdapter("pictureOfDay")
+fun bindImage(imgView: ImageView, pictureOfDay: PictureOfDay) {
+    if (pictureOfDay.mediaType == "image") {
+        Picasso.get().load(pictureOfDay.url).into(imgView)
+        imgView.contentDescription = imgView.context.getString(
+            R.string.nasa_picture_of_day_content_description_format,
+            pictureOfDay.title
+        )
+    } else {
+        imgView.contentDescription = imgView.context.getString(
+            R.string.nasa_picture_of_day_not_image
+        )
+    }
+}
 
 @BindingAdapter("listData")
 fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?) {
