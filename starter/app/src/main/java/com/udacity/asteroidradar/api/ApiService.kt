@@ -5,14 +5,13 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
-import com.udacity.asteroidradar.domain.PictureOfDay
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -22,7 +21,7 @@ interface ApiService {
     fun getAsteroids(
         @Query("start_date") startDay: String,
         @Query("end_date") endDay: String
-    ): Deferred<JSONObject>
+    ): Deferred<String>
 
     @GET("planetary/apod")
     fun getPictureOfDay(): Deferred<PictureOfDayDto>
@@ -55,22 +54,22 @@ private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
+private val okHttpClient = OkHttpClient.Builder()
+    .addInterceptor(CustomInterceptor())
+    .build()
+
+// Configure retrofit to parse JSON and use coroutines
+private val retrofit = Retrofit.Builder()
+    .baseUrl(BASE_URL)
+    .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .addConverterFactory(ScalarsConverterFactory.create())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .client(okHttpClient)
+    .build()
+
 /**
  * Main entry point for network access.
  */
 object NetworkApi {
-
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(CustomInterceptor())
-        .build()
-
-    // Configure retrofit to parse JSON and use coroutines
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .addCallAdapterFactory(CoroutineCallAdapterFactory())
-        .client(okHttpClient)
-        .build()
-
     val service: ApiService = retrofit.create(ApiService::class.java)
 }

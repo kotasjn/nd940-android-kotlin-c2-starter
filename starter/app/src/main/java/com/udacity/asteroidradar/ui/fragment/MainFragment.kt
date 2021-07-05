@@ -8,19 +8,29 @@ import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.adapter.AsteroidAdapter
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-import com.udacity.asteroidradar.viewmodel.MainViewModel
+import com.udacity.asteroidradar.viewmodel.AsteroidViewModel
 
 class MainFragment : Fragment() {
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+    private lateinit var binding: FragmentMainBinding
+
+    /**
+     * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
+     * lazy. This requires that viewModel not be referenced before onViewCreated(), which we
+     * do in this Fragment.
+     */
+    private val viewModel: AsteroidViewModel by lazy {
+        val activity = requireNotNull(this.activity) {
+            "You can only access the viewModel after onViewCreated()"
+        }
+        ViewModelProvider(this, AsteroidViewModel.Factory(activity.application)).get(AsteroidViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentMainBinding.inflate(inflater)
+        binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
         binding.viewModel = viewModel
@@ -29,6 +39,13 @@ class MainFragment : Fragment() {
             viewModel.displayAsteroidDetail(it)
         })
 
+        setHasOptionsMenu(true)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, {
             if (null != it) {
                 // Must find the NavController from the Fragment
@@ -39,10 +56,6 @@ class MainFragment : Fragment() {
                 viewModel.displayPropertyDetailsComplete()
             }
         })
-
-        setHasOptionsMenu(true)
-
-        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
