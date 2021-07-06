@@ -77,9 +77,9 @@ private val okHttpClient = OkHttpClient.Builder()
 // Configure retrofit to parse JSON and use coroutines
 private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
-    .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .addConverterFactory(ScalarsConverterFactory.create())
     .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .addConverterFactory(ScalarsConverterFactory.create())
+    .addConverterFactory(MoshiConverterFactory.create(moshi))
     .client(okHttpClient)
     .build()
 
