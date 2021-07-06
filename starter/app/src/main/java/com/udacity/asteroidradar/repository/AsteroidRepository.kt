@@ -65,4 +65,10 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             database.asteroidDao.insertAll(*parseAsteroidsJsonResult(JSONObject(asteroids)).asDatabaseModel())
         }
     }
+
+    suspend fun deletePreviousAsteroids() {
+        withContext(Dispatchers.IO) {
+            database.asteroidDao.deletePreviousAsteroids(getDateFormatted())
+        }
+    }
 }
