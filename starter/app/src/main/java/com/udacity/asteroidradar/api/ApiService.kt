@@ -21,7 +21,7 @@ import retrofit2.http.QueryMap
 enum class AsteroidFilter {
     WEEK,
     TODAY,
-    All
+    ALL
 }
 
 interface ApiService {

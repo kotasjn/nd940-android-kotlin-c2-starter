@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.udacity.asteroidradar.api.AsteroidFilter
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.repository.AsteroidRepository
@@ -13,21 +14,22 @@ class AsteroidViewModel(application: Application) : AndroidViewModel(application
 
     private val database = getDatabase(application)
 
-    private val asteroidsRepository = AsteroidRepository(database)
+    private val asteroidRepository = AsteroidRepository(database)
 
-    val pictureOfDay = asteroidsRepository.pictureOFDay
+    val pictureOfDay = asteroidRepository.pictureOFDay
 
-    val asteroids = asteroidsRepository.asteroids
+    val asteroids = asteroidRepository.asteroids
 
     private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid?>()
     val navigateToSelectedAsteroid: MutableLiveData<Asteroid?>
         get() = _navigateToSelectedAsteroid
 
     init {
+        asteroidRepository.setFilter(AsteroidFilter.TODAY)
         viewModelScope.launch {
             try {
-                asteroidsRepository.getPictureOfDay()
-                asteroidsRepository.refreshAsteroids()
+                asteroidRepository.getPictureOfDay()
+                asteroidRepository.refreshAsteroids()
             } catch (e: Exception) {
                 Log.e("AsteroidRadar", e.toString())
             }
@@ -40,6 +42,10 @@ class AsteroidViewModel(application: Application) : AndroidViewModel(application
 
     fun displayPropertyDetailsComplete() {
         _navigateToSelectedAsteroid.value = null
+    }
+
+    fun setFilter(filter: AsteroidFilter) {
+        asteroidRepository.setFilter(filter)
     }
 
     /**

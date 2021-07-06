@@ -7,7 +7,6 @@ import com.udacity.asteroidradar.Constants.DEFAULT_END_DATE_DAYS
 import com.udacity.asteroidradar.api.*
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.asDomainModel
-import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.PictureOfDay
 import com.udacity.asteroidradar.domain.asDatabaseModel
 import kotlinx.coroutines.Dispatchers
@@ -20,16 +19,37 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
     val pictureOFDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
-    val asteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAllAsteroids()) {
-            it.asDomainModel()
+    private val asteroidFilter = MutableLiveData<AsteroidFilter>()
+
+    val asteroids = Transformations.switchMap(asteroidFilter) { filter ->
+        when (filter) {
+            AsteroidFilter.TODAY -> Transformations.map(
+                database.asteroidDao.getTodayAsteroids(
+                    getDateFormatted()
+                )
+            ) { it.asDomainModel() }
+            AsteroidFilter.WEEK -> Transformations.map(
+                database.asteroidDao.getWeekAsteroids(
+                    getDateFormatted(),
+                    getDateFormatted(DEFAULT_END_DATE_DAYS)
+                )
+            ) { it.asDomainModel() }
+            AsteroidFilter.ALL -> Transformations.map(
+                database.asteroidDao.getAllAsteroids()
+            ) { it.asDomainModel() }
+            null -> MutableLiveData()
         }
+    }
 
     private val queryMap = QueryMap<String, String>()
 
     init {
         queryMap["start_date"] = getDateFormatted()
         queryMap["end_date"] = getDateFormatted(DEFAULT_END_DATE_DAYS)
+    }
+
+    fun setFilter(filter: AsteroidFilter) {
+        asteroidFilter.value = filter
     }
 
     suspend fun getPictureOfDay() {
@@ -45,5 +65,4 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             database.asteroidDao.insertAll(*parseAsteroidsJsonResult(JSONObject(asteroids)).asDatabaseModel())
         }
     }
-
 }
