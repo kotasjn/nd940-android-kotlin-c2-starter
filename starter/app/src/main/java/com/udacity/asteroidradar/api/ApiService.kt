@@ -1,11 +1,8 @@
 package com.udacity.asteroidradar.api
 
-import com.chuckerteam.chucker.api.ChuckerCollector
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.AsteroidRadarApplication
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
 import kotlinx.coroutines.Deferred
@@ -64,14 +61,6 @@ private val moshi = Moshi.Builder()
 
 private val okHttpClient = OkHttpClient.Builder()
     .addInterceptor(CustomInterceptor())
-    .addInterceptor(
-        ChuckerInterceptor.Builder(AsteroidRadarApplication.appContext)
-            .collector(ChuckerCollector(AsteroidRadarApplication.appContext))
-            .maxContentLength(250000L)
-            .redactHeaders(emptySet())
-            .alwaysReadResponseBody(false)
-            .build()
-    )
     .build()
 
 // Configure retrofit to parse JSON and use coroutines

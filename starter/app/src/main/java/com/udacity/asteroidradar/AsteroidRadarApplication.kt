@@ -1,7 +1,6 @@
 package com.udacity.asteroidradar
 
 import android.app.Application
-import android.content.Context
 import androidx.work.*
 import com.udacity.asteroidradar.work.RefreshDataWorker
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +15,6 @@ class AsteroidRadarApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         delayedInit()
-        appContext = applicationContext
     }
 
     private fun delayedInit() = applicationScope.launch {
@@ -38,9 +36,5 @@ class AsteroidRadarApplication : Application() {
             ExistingPeriodicWorkPolicy.KEEP,
             repeatingRequest
         )
-    }
-
-    companion object {
-        lateinit var appContext: Context
     }
 }

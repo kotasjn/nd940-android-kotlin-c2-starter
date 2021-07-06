@@ -22,19 +22,6 @@ data class Asteroid(
     val isPotentiallyHazardous: Boolean
 ) : Parcelable
 
-fun Asteroid.asDatabaseModel(): AsteroidEntity {
-    return AsteroidEntity(
-        id = id,
-        codename = codename,
-        closeApproachDate = closeApproachDate,
-        absoluteMagnitude = absoluteMagnitude,
-        estimatedDiameter = estimatedDiameter,
-        relativeVelocity = relativeVelocity,
-        distanceFromEarth = distanceFromEarth,
-        isPotentiallyHazardous = isPotentiallyHazardous
-    )
-}
-
 fun ArrayList<Asteroid>.asDatabaseModel(): Array<AsteroidEntity> {
     return map {
         AsteroidEntity(

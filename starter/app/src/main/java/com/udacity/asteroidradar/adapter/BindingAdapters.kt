@@ -1,6 +1,8 @@
 package com.udacity.asteroidradar.adapter
 
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -33,11 +35,18 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?) {
     adapter.submitList(data)
 }
 
+@BindingAdapter("progressVisible")
+fun bindProgressVisible(progressBar: ProgressBar, data: List<Any>?) {
+    progressBar.visibility = if (data == null) View.VISIBLE else View.GONE
+}
+
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
     if (isHazardous) {
         imageView.setImageResource(R.drawable.ic_status_potentially_hazardous)
+        imageView.contentDescription = imageView.context.getString(R.string.potentially_hazardous_asteroid_image)
     } else {
+        imageView.contentDescription = imageView.context.getString(R.string.not_hazardous_asteroid_image)
         imageView.setImageResource(R.drawable.ic_status_normal)
     }
 }
