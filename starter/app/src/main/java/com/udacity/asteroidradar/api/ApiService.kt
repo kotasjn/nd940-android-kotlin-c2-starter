@@ -1,8 +1,11 @@
 package com.udacity.asteroidradar.api
 
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.udacity.asteroidradar.AsteroidRadarApplication
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
 import kotlinx.coroutines.Deferred
@@ -13,14 +16,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.QueryMap
+
+enum class AsteroidFilter {
+    WEEK,
+    TODAY,
+    All
+}
 
 interface ApiService {
 
     @GET("neo/rest/v1/feed")
     fun getAsteroids(
-        @Query("start_date") startDay: String,
-        @Query("end_date") endDay: String
+        @QueryMap(encoded = true) options: Map<String, String>
     ): Deferred<String>
 
     @GET("planetary/apod")
@@ -56,6 +64,14 @@ private val moshi = Moshi.Builder()
 
 private val okHttpClient = OkHttpClient.Builder()
     .addInterceptor(CustomInterceptor())
+    .addInterceptor(
+        ChuckerInterceptor.Builder(AsteroidRadarApplication.appContext)
+            .collector(ChuckerCollector(AsteroidRadarApplication.appContext))
+            .maxContentLength(250000L)
+            .redactHeaders(emptySet())
+            .alwaysReadResponseBody(false)
+            .build()
+    )
     .build()
 
 // Configure retrofit to parse JSON and use coroutines

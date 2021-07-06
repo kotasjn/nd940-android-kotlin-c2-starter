@@ -4,7 +4,11 @@ import android.os.Parcelable
 import com.udacity.asteroidradar.database.AsteroidEntity
 import kotlinx.android.parcel.Parcelize
 
-data class PictureOfDay(val mediaType: String, val title: String, val url: String)
+data class PictureOfDay(
+    val mediaType: String,
+    val title: String,
+    val url: String
+)
 
 @Parcelize
 data class Asteroid(
@@ -29,4 +33,19 @@ fun Asteroid.asDatabaseModel(): AsteroidEntity {
         distanceFromEarth = distanceFromEarth,
         isPotentiallyHazardous = isPotentiallyHazardous
     )
+}
+
+fun ArrayList<Asteroid>.asDatabaseModel(): Array<AsteroidEntity> {
+    return map {
+        AsteroidEntity(
+            id = it.id,
+            codename = it.codename,
+            closeApproachDate = it.closeApproachDate,
+            absoluteMagnitude = it.absoluteMagnitude,
+            estimatedDiameter = it.estimatedDiameter,
+            relativeVelocity = it.relativeVelocity,
+            distanceFromEarth = it.distanceFromEarth,
+            isPotentiallyHazardous = it.isPotentiallyHazardous
+        )
+    }.toTypedArray()
 }

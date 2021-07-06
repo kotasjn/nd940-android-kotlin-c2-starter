@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.api
 
 import com.squareup.moshi.JsonClass
 import com.udacity.asteroidradar.domain.PictureOfDay
+import java.util.*
 
 /**
  * Daily picture that NASA chooses
@@ -24,3 +25,8 @@ fun PictureOfDayDto.asDomainModel(): PictureOfDay {
     )
 }
 
+class QueryMap<T, V> : HashMap<T, V>() {
+    override fun put(key: T, value: V): V? {
+        return if (key == null || value == null) null else super.put(key, value)
+    }
+}

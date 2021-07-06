@@ -1,17 +1,19 @@
 package com.udacity.asteroidradar.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.repository.AsteroidsRepository
+import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class AsteroidViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = getDatabase(application)
 
-    private val asteroidsRepository = AsteroidsRepository(database)
+    private val asteroidsRepository = AsteroidRepository(database)
 
     val pictureOfDay = asteroidsRepository.pictureOFDay
 
@@ -23,7 +25,12 @@ class AsteroidViewModel(application: Application) : AndroidViewModel(application
 
     init {
         viewModelScope.launch {
-            asteroidsRepository.getPictureOfDay()
+            try {
+                asteroidsRepository.getPictureOfDay()
+                asteroidsRepository.refreshAsteroids()
+            } catch (e: Exception) {
+                Log.e("AsteroidRadar", e.toString())
+            }
         }
     }
 
