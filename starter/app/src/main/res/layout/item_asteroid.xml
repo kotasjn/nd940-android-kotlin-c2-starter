@@ -48,6 +48,7 @@
 			android:layout_marginTop="@dimen/space_16dp"
 			android:layout_marginEnd="@dimen/space_16dp"
 			android:layout_marginBottom="@dimen/space_16dp"
+			android:contentDescription="@{asteroid.potentiallyHazardous ? @string/potentially_hazardous_asteroid_image : @string/not_hazardous_asteroid_image}"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
